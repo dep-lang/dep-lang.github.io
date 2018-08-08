@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Intro - The Dep Programming Language</title>
+        <title>Memory Management - The Dep Programming Language</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html" class="active"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,19 +136,91 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Temporary (Pre)Dep Language Specification</p>
-<p>This will definitely move, at the very least to a markdown file in the source code.</p>
-<p>Right now this is just going to be mostly example code to get this out here</p>
-<a class="header" href="#purpose" id="purpose"><h1>Purpose</h1></a>
-<p>Dep has one clear goal: if it compiles, it has been proven correct!</p>
-<p>The author adds &quot;properties&quot; to methods and classes that specify preconditions, postconditions, and representation invariants. With this information Dep can prove at compile time that all of your code meets these specifications.</p>
+                        <a class="header" href="#memory-management" id="memory-management"><h1>Memory Management</h1></a>
+<p>This section is very volatile, and not fully decided. However, I'd like to present my tentative idea</p>
+<a class="header" href="#non-nullable--nullable-types" id="non-nullable--nullable-types"><h2>Non-Nullable &amp; Nullable Types</h2></a>
+<p>By default, when you declare a variable with a non-primitive type, like <code>String</code> as shown here...</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+String s = &quot;Hello&quot;;
+Vec v = Vec.new();
+#}</code></pre></pre>
+<p>In this situation, the Type identifier on the far left was just the type name. This means that you have defined a non-nullable reference, like in Swift.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+//String s = null;
+//BAD: s is non-nullable
+#}</code></pre></pre>
+<p>Also as in Swift, null-able data types can be declared using a <code>?</code> after the type name</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+String? s = null;
+//OK!
+#}</code></pre></pre>
+<p>This means that if your function might return null, the return type must be nullable</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn mightBeNull() -&gt; String? {
+  if (rand(100) == 0)
+    null;
+  else
+    &quot;roll again...&quot;;
+}
+#}</code></pre></pre>
+<p>And if you have a non-nullable data type, it cannot take nullable data</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+//String s = mightBeNull();
+//BAD: mightBeNull returns a nullable String
+#}</code></pre></pre>
+<p>Here we can use the reduced ternary operator (<code>?:</code>) AKA the Elvis operator to return early if this <code>mightBeNull()</code> is <code>null</code></p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+String s = mightBeNull() ?: return;
+#}</code></pre></pre>
+<a class="header" href="#owned-types" id="owned-types"><h2>Owned Types</h2></a>
+<p>However, we would like introduce the concept of ownership similar to in Rust. This provides a benefit not only in the efficiency of your code, but also in its structure.</p>
+<p>I'm imagining something like</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+Vec own my_vec = Vec.own();
+#}</code></pre></pre>
+<p>Where the <code>Vec.own()</code> method returns a new owned reference to a <code>Vec</code>. You could also get a reference like</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+Vec own my_vec = Vec.own();
+Vec ref borrow = ref my_vec;
+#}</code></pre></pre>
+<p>I also had another idea where there is a shortened syntax for both of these</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+Vec$ owned_vec = Vec.own();
+Vec&amp; borrow = &amp;owned_vec;
+#}</code></pre></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="property_functions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
+                        
+                            <a rel="next" href="predep_vs_dep.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -158,7 +230,15 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a href="property_functions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
+                
+                    <a href="predep_vs_dep.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Intro - The Dep Programming Language</title>
+        <title>Hello World - The Dep Programming Language</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html" class="active">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,19 +136,31 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Temporary (Pre)Dep Language Specification</p>
-<p>This will definitely move, at the very least to a markdown file in the source code.</p>
-<p>Right now this is just going to be mostly example code to get this out here</p>
-<a class="header" href="#purpose" id="purpose"><h1>Purpose</h1></a>
-<p>Dep has one clear goal: if it compiles, it has been proven correct!</p>
-<p>The author adds &quot;properties&quot; to methods and classes that specify preconditions, postconditions, and representation invariants. With this information Dep can prove at compile time that all of your code meets these specifications.</p>
+                        <a class="header" href="#hello-world" id="hello-world"><h1>Hello World</h1></a>
+<pre><code class="language-dep">fn main() {
+  println!(&quot;Hello, World!&quot;);
+}
+</code></pre>
+<ul>
+<li><code>fn</code> starts a function</li>
+<li>Curly braces around the function body (C/Java style)</li>
+<li>The <code>println!()</code> function is a macro, which is why it ends with a <code>!</code></li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="intro.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
+                        
+                            <a rel="next" href="basic_syntax.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -158,7 +170,15 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a href="intro.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
+                
+                    <a href="basic_syntax.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 

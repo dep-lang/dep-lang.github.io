@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Chapter 1</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -143,10 +143,10 @@
 <p>Dep has one clear goal: if it compiles, it has been proven correct!</p>
 <p>The author adds &quot;properties&quot; to methods and classes that specify preconditions, postconditions, and representation invariants. With this information Dep can prove at compile time that all of your code meets these specifications.</p>
 <a class="header" href="#hello-world" id="hello-world"><h1>Hello World</h1></a>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><code class="language-dep">fn main() {
   println!(&quot;Hello, World!&quot;);
 }
-</code></pre></pre>
+</code></pre>
 <ul>
 <li><code>fn</code> starts a function</li>
 <li>Curly braces around the function body (C/Java style)</li>
@@ -155,11 +155,8 @@
 <a class="header" href="#basic-syntax" id="basic-syntax"><h1>Basic Syntax</h1></a>
 <a class="header" href="#variables" id="variables"><h2>Variables</h2></a>
 <p>In Dep, declare a new variable like so</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-int num = 401;
-#}</code></pre></pre>
+<pre><code class="language-dep">int num = 401;
+</code></pre>
 <p>It contains:</p>
 <ul>
 <li>Type</li>
@@ -389,7 +386,7 @@ for (int curr in src) { # left : Lt(pivot) &amp;&amp; right : Geq(pivot)
 <p>For example, we know that at the start of the first iteration of the loop, left will be empty, meaning that all of the elements in it are less than the pivot (since there are none).</p>
 <p>It gets more interesting when we realize that the compiler has infered that because <code>left</code> is only modified in one branch of the if statement, it can make stronger assumptions about how <code>left</code> is being modified. And indeed, <code>left</code> will only ever be modified by pushing elements less than the pivot onto the end of it.</p>
 <p>Applying the same logic we can see how <code>Geq()</code> was applied</p>
-<a class="header" href="#property-functions" id="property-functions"><h2>Property Functions</h2></a>
+<a class="header" href="#property-functions" id="property-functions"><h1>Property Functions</h1></a>
 <a class="header" href="#adjpair" id="adjpair"><h2><code>AdjPair()</code></h2></a>
 <p>In the quicksort example, we used the property <code>Sorted</code> whose definition includes this operation on a  <code>Vec</code></p>
 <pre><pre class="playpen"><code class="language-rust">

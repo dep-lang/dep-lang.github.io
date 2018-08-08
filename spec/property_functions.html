@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Intro - The Dep Programming Language</title>
+        <title>Property Functions - The Dep Programming Language</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html" class="active"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,19 +136,67 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Temporary (Pre)Dep Language Specification</p>
-<p>This will definitely move, at the very least to a markdown file in the source code.</p>
-<p>Right now this is just going to be mostly example code to get this out here</p>
-<a class="header" href="#purpose" id="purpose"><h1>Purpose</h1></a>
-<p>Dep has one clear goal: if it compiles, it has been proven correct!</p>
-<p>The author adds &quot;properties&quot; to methods and classes that specify preconditions, postconditions, and representation invariants. With this information Dep can prove at compile time that all of your code meets these specifications.</p>
+                        <a class="header" href="#property-functions" id="property-functions"><h1>Property Functions</h1></a>
+<a class="header" href="#adjpair" id="adjpair"><h2><code>AdjPair()</code></h2></a>
+<p>In the quicksort example, we used the property <code>Sorted</code> whose definition includes this operation on a  <code>Vec</code></p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+self.AdjPair()
+#}</code></pre></pre>
+<p>This is a property function, like properties it generates no run-time code and uses UpperCase.</p>
+<p><code>AdjPair</code> describes every adjacent pair in a vector, let's look at its definition</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+prop fn AdjPair(Vec self) -&gt; prop Iter&lt;(int, int)&gt; {
+//                           ^^^^ not necessary, but nice if you want to be explicit
+  forall i in 0..self.len-2: (self.arr[i], self.arr[i+1])
+}
+#}</code></pre></pre>
+<p>This property function returns a &quot;property iterator&quot; over the adjacent pairs in <code>self</code>. The <code>prop</code> keyword in the return type indicates that this value will never be created at run-time. <code>prop</code> values can only be returned by <code>prop</code> functions, and because of this, the <code>prop</code> in the return type is optional, but we use it to differentiate between a real, run-time iterator and a property iterator that simply represents an expression to the compiler.</p>
+<p>Again, we use the <code>forall</code> syntax to make an expression, this time representing values instead of just boolean expressions. Specifically, we are creating a set of tuples, where each one represents an adjacent pair in the <code>self</code> internal array.</p>
+<a class="header" href="#property-types" id="property-types"><h2>Property Types</h2></a>
+<p>The <code>prop Iter</code> from the last section is one of actually only a handful of these property types. Because property types are only ever needed at compile-time they work closely with the language and cannot be extended by the user.</p>
+<a class="header" href="#reordervec" id="reordervec"><h2><code>Reorder(Vec)</code></h2></a>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+prop Reorder(Vec self, Vec src) {
+  forall e in self: e in src,
+  forall e in src: e in self
+}
+#}</code></pre></pre>
+<a class="header" href="#the-in-keyword" id="the-in-keyword"><h1>The <code>in</code> keyword</h1></a>
+<p>In Dep, the <code>in</code> keyword can be used both in runtime <code>for</code> loops and compile-time <code>forall</code> expressions</p>
+<p>They both call functions which can be overridden. <code>iter()</code> for <code>for</code> loops and <code>propIter()</code> for <code>forall</code> expressions</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn iter(Vec self) -&gt; Iter&lt;int&gt;;
+#}</code></pre></pre>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+prop fn propIter(Vec self) -&gt; prop Iter&lt;int&gt; {
+  forall i in self.len-1: self.arr[i]
+}
+#}</code></pre></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="properties.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
+                        
+                            <a rel="next" href="memory_management.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -158,7 +206,15 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a href="properties.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
+                
+                    <a href="memory_management.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 

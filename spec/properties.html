@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Chapter 1 - The Dep Programming Language</title>
+        <title>Properties in Dep - The Dep Programming Language</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="chapter_1.html" class="active"><strong aria-hidden="true">1.</strong> Chapter 1</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html" class="active"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,60 +136,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Temporary (Pre)Dep Language Specification</p>
-<p>This will definitely move, at the very least to a markdown file in the source code.</p>
-<p>Right now this is just going to be mostly example code to get this out here</p>
-<a class="header" href="#purpose" id="purpose"><h1>Purpose</h1></a>
-<p>Dep has one clear goal: if it compiles, it has been proven correct!</p>
-<p>The author adds &quot;properties&quot; to methods and classes that specify preconditions, postconditions, and representation invariants. With this information Dep can prove at compile time that all of your code meets these specifications.</p>
-<a class="header" href="#hello-world" id="hello-world"><h1>Hello World</h1></a>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
-  println!(&quot;Hello, World!&quot;);
-}
-</code></pre></pre>
-<ul>
-<li><code>fn</code> starts a function</li>
-<li>Curly braces around the function body (C/Java style)</li>
-<li>The <code>println!()</code> function is a macro, which is why it ends with a <code>!</code></li>
-</ul>
-<a class="header" href="#basic-syntax" id="basic-syntax"><h1>Basic Syntax</h1></a>
-<a class="header" href="#variables" id="variables"><h2>Variables</h2></a>
-<p>In Dep, declare a new variable like so</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-int num = 401;
-#}</code></pre></pre>
-<p>It contains:</p>
-<ul>
-<li>Type</li>
-<li>Name</li>
-<li>Initial value (optional)</li>
-</ul>
-<p>Dep has the usual primitive types <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code></p>
-<p>Primitives all lowercase, but all user defined types including standard library types like <code>String</code> and <code>Vec</code> must use UpperCase</p>
-<a class="header" href="#mutability" id="mutability"><h2>Mutability</h2></a>
-<p>Variables are immutable by default in Dep. To make them mutable, add the <code>mut</code> keyword</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-Vec my_vec = Vec.new();
-//my_vec.push(5);
-//BAD: my_vec is immutable, push requires a mutable Vec
-Vec mut my_mut_vec = Vec.new();
-my_mut_vec.push(5);
-//OK!
-#}</code></pre></pre>
-<a class="header" href="#functions" id="functions"><h2>Functions</h2></a>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-fn sum(int i, int j) -&gt; int {
-  return i + j;
-}
-#}</code></pre></pre>
-<p>Return type is denoted after the <code>-&gt;</code> following the function signature. If no return type is specified, this means the function returns nothing.</p>
-<a class="header" href="#properties-in-dep" id="properties-in-dep"><h1>Properties in Dep</h1></a>
+                        <a class="header" href="#properties-in-dep" id="properties-in-dep"><h1>Properties in Dep</h1></a>
 <a class="header" href="#zero-cost-abstraction" id="zero-cost-abstraction"><h2>Zero-Cost Abstraction</h2></a>
 <p>In Dep, you can guarantee the correctness of your code without ever sacrificing speed. Just like how the type system in C/C++ has effect on speed, properties in Dep are only checked at compile-time.</p>
 <p>This is the core principle of Dep:</p>
@@ -389,132 +336,21 @@ for (int curr in src) { # left : Lt(pivot) &amp;&amp; right : Geq(pivot)
 <p>For example, we know that at the start of the first iteration of the loop, left will be empty, meaning that all of the elements in it are less than the pivot (since there are none).</p>
 <p>It gets more interesting when we realize that the compiler has infered that because <code>left</code> is only modified in one branch of the if statement, it can make stronger assumptions about how <code>left</code> is being modified. And indeed, <code>left</code> will only ever be modified by pushing elements less than the pivot onto the end of it.</p>
 <p>Applying the same logic we can see how <code>Geq()</code> was applied</p>
-<a class="header" href="#property-functions" id="property-functions"><h2>Property Functions</h2></a>
-<a class="header" href="#adjpair" id="adjpair"><h2><code>AdjPair()</code></h2></a>
-<p>In the quicksort example, we used the property <code>Sorted</code> whose definition includes this operation on a  <code>Vec</code></p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-self.AdjPair()
-#}</code></pre></pre>
-<p>This is a property function, like properties it generates no run-time code and uses UpperCase.</p>
-<p><code>AdjPair</code> describes every adjacent pair in a vector, let's look at its definition</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-prop fn AdjPair(Vec self) -&gt; prop Iter&lt;(int, int)&gt; {
-//                           ^^^^ not necessary, but nice if you want to be explicit
-  forall i in 0..self.len-2: (self.arr[i], self.arr[i+1])
-}
-#}</code></pre></pre>
-<p>This property function returns a &quot;property iterator&quot; over the adjacent pairs in <code>self</code>. The <code>prop</code> keyword in the return type indicates that this value will never be created at run-time. <code>prop</code> values can only be returned by <code>prop</code> functions, and because of this, the <code>prop</code> in the return type is optional, but we use it to differentiate between a real, run-time iterator and a property iterator that simply represents an expression to the compiler.</p>
-<p>Again, we use the <code>forall</code> syntax to make an expression, this time representing values instead of just boolean expressions. Specifically, we are creating a set of tuples, where each one represents an adjacent pair in the <code>self</code> internal array.</p>
-<a class="header" href="#property-types" id="property-types"><h2>Property Types</h2></a>
-<p>The <code>prop Iter</code> from the last section is one of actually only a handful of these property types. Because property types are only ever needed at compile-time they work closely with the language and cannot be extended by the user.</p>
-<a class="header" href="#reordervec" id="reordervec"><h2><code>Reorder(Vec)</code></h2></a>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-prop Reorder(Vec self, Vec src) {
-  forall e in self: e in src,
-  forall e in src: e in self
-}
-#}</code></pre></pre>
-<a class="header" href="#the-in-keyword" id="the-in-keyword"><h1>The <code>in</code> keyword</h1></a>
-<p>In Dep, the <code>in</code> keyword can be used both in runtime <code>for</code> loops and compile-time <code>forall</code> expressions</p>
-<p>They both call functions which can be overridden. <code>iter()</code> for <code>for</code> loops and <code>propIter()</code> for <code>forall</code> expressions</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-fn iter(Vec self) -&gt; Iter&lt;int&gt;;
-#}</code></pre></pre>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-prop fn propIter(Vec self) -&gt; prop Iter&lt;int&gt; {
-  forall i in self.len-1: self.arr[i]
-}
-#}</code></pre></pre>
-<a class="header" href="#memory-management" id="memory-management"><h1>Memory Management</h1></a>
-<p>This section is very volatile, and not fully decided. However, I'd like to present my tentative idea</p>
-<a class="header" href="#non-nullable--nullable-types" id="non-nullable--nullable-types"><h2>Non-Nullable &amp; Nullable Types</h2></a>
-<p>By default, when you declare a variable with a non-primitive type, like <code>String</code> as shown here...</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-String s = &quot;Hello&quot;;
-Vec v = Vec.new();
-#}</code></pre></pre>
-<p>In this situation, the Type identifier on the far left was just the type name. This means that you have defined a non-nullable reference, like in Swift.</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-//String s = null;
-//BAD: s is non-nullable
-#}</code></pre></pre>
-<p>Also as in Swift, null-able data types can be declared using a <code>?</code> after the type name</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-String? s = null;
-//OK!
-#}</code></pre></pre>
-<p>This means that if your function might return null, the return type must be nullable</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-fn mightBeNull() -&gt; String? {
-  if (rand(100) == 0)
-    null;
-  else
-    &quot;roll again...&quot;;
-}
-#}</code></pre></pre>
-<p>And if you have a non-nullable data type, it cannot take nullable data</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-//String s = mightBeNull();
-//BAD: mightBeNull returns a nullable String
-#}</code></pre></pre>
-<p>Here we can use the reduced ternary operator (<code>?:</code>) AKA the Elvis operator to return early if this <code>mightBeNull()</code> is <code>null</code></p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-String s = mightBeNull() ?: return;
-#}</code></pre></pre>
-<a class="header" href="#owned-types" id="owned-types"><h2>Owned Types</h2></a>
-<p>However, we would like introduce the concept of ownership similar to in Rust. This provides a benefit not only in the efficiency of your code, but also in its structure.</p>
-<p>I'm imagining something like</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-Vec own my_vec = Vec.own();
-#}</code></pre></pre>
-<p>Where the <code>Vec.own()</code> method returns a new owned reference to a <code>Vec</code>. You could also get a reference like</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-Vec own my_vec = Vec.own();
-Vec ref borrow = ref my_vec;
-#}</code></pre></pre>
-<p>I also had another idea where there is a shortened syntax for both of these</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-Vec$ owned_vec = Vec.own();
-Vec&amp; borrow = &amp;owned_vec;
-#}</code></pre></pre>
-<a class="header" href="#pre-dep-vs-dep" id="pre-dep-vs-dep"><h1>Pre-Dep vs Dep</h1></a>
-<p>What's the whole deal with this Pre-Dep business? Basically, I'm not 100% set on the semantics and syntax of the language, and some things are so in-flux that I'm not confident I can describe a &quot;beta&quot; form of the language and then just make small changes. More like I need to make an &quot;alpha&quot; of the language (Pre-Dep) , and then decide for real on some of the semantics which will get finalized and become the Dep language.</p>
-<p>I chose the name Pre-Dep because in my opinion it's easier to describe the earlier state of a language using a different name than version number like Python 2 vs 3</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="basic_syntax.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
+                        
+                            <a rel="next" href="property_functions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -524,7 +360,15 @@ Vec&amp; borrow = &amp;owned_vec;
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a href="basic_syntax.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
+                
+                    <a href="property_functions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 
