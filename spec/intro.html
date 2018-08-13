@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="intro.html" class="active">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html" class="active">Intro</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><ol class="section"><li><a href="hello_world.html"><strong aria-hidden="true">1.1.</strong> Hello World</a></li><li><a href="1_variables.html"><strong aria-hidden="true">1.2.</strong> Variables</a></li><li><a href="1_mutability.html"><strong aria-hidden="true">1.3.</strong> Mutability</a></li><li><a href="1_functions.html"><strong aria-hidden="true">1.4.</strong> Functions</a></li></ol></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><ol class="section"><li><a href="2_colon.html"><strong aria-hidden="true">2.1.</strong> The Colon Operator</a></li><li><a href="2_function_contracts.html"><strong aria-hidden="true">2.2.</strong> Function Contracts</a></li><li><a href="2_local_variables.html"><strong aria-hidden="true">2.3.</strong> Local Variables with Properties</a></li><li><a href="2_making_properties.html"><strong aria-hidden="true">2.4.</strong> Making Our Own Properties</a></li><li><a href="2_ctassert.html"><strong aria-hidden="true">2.5.</strong> Compile Time Asserts</a></li><li><a href="2_std_props.html"><strong aria-hidden="true">2.6.</strong> Standrad Library Properties</a></li><li><a href="2_q_sort.html"><strong aria-hidden="true">2.7.</strong> Quicksort Example</a></li></ol></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="halting.html"><strong aria-hidden="true">4.</strong> Halting</a></li><li><ol class="section"><li><a href="recursion_base_case.html"><strong aria-hidden="true">4.1.</strong> Recursion Base Case</a></li></ol></li><li><a href="memory_management.html"><strong aria-hidden="true">5.</strong> Memory Management</a></li><li><ol class="section"><li><a href="owned_types.html"><strong aria-hidden="true">5.1.</strong> Owned Types</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,12 +136,47 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Temporary (Pre)Dep Language Specification</p>
-<p>This will definitely move, at the very least to a markdown file in the source code.</p>
-<p>Right now this is just going to be mostly example code to get this out here</p>
+                        <p>Dep Language Specification</p>
 <a class="header" href="#purpose" id="purpose"><h1>Purpose</h1></a>
 <p>Dep has one clear goal: if it compiles, it has been proven correct!</p>
-<p>The author adds &quot;properties&quot; to methods and classes that specify preconditions, postconditions, and representation invariants. With this information Dep can prove at compile time that all of your code meets these specifications.</p>
+<p>Correct here means that it matches the specification written as using properties in Dep.</p>
+<a class="header" href="#example" id="example"><h2>Example</h2></a>
+<p>Here is a correct quicksort implementation in Dep. The return type guarantess that it is sorted, and is a reordering of the input vector. All of this can be inferred by the compiler without the author adding any special logic.</p>
+<pre><code class="language-dep">fn q_sort(Vec src) -&gt; Vec : Sorted + Reorder(src) {
+  if (src.len &lt; 2)
+    return src;
+  int pivot = src.getRandMedian();
+  # pivot != src.Smallest()
+  Vec mut left = Vec.new();
+  Vec mut right = Vec.new();
+  for (int curr in src) {  # left : Lt(pivot) &amp;&amp; right : Geq(pivot)
+                          // ^^ serves as loop invariant, but is *not* necessary
+    if (curr &lt; pivot) 
+      left.push(curr);
+    else 
+      right.push(curr);
+  }
+  left = q_sort(left);
+  right = q_sort(right);
+  return left.push(right);
+}
+</code></pre>
+<p>Dep also prevents a host of other errors by turning them into compile time errors.</p>
+<p>Accidentally sort the left list twice? Compiler error: output not a reorder, and not sorted.</p>
+<p>Leave out the base case? Compiler error: infinite recursion.</p>
+<p>Get a totally random pivot instead of a median of some kind? Compiler error: potentially infinite recursion.</p>
+<a class="header" href="#selling-points" id="selling-points"><h1>Selling Points</h1></a>
+<ul>
+<li>
+<p>Encode a rigorous formal specification naturally into the source code</p>
+</li>
+<li>
+<p>Imperitive, expression oriented</p>
+</li>
+<li>
+<p>Choice between GC-references or owned-RAII types</p>
+</li>
+</ul>
 
                     </main>
 
@@ -150,7 +185,7 @@
                         
 
                         
-                            <a rel="next" href="hello_world.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="basic_syntax.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -164,7 +199,7 @@
                 
 
                 
-                    <a href="hello_world.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="basic_syntax.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

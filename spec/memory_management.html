@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li class="affix"><a href="hello_world.html">Hello World</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="memory_management.html" class="active"><strong aria-hidden="true">4.</strong> Memory Management</a></li><li class="affix"><a href="predep_vs_dep.html">Pre-Dep vs Dep</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><ol class="section"><li><a href="hello_world.html"><strong aria-hidden="true">1.1.</strong> Hello World</a></li><li><a href="1_variables.html"><strong aria-hidden="true">1.2.</strong> Variables</a></li><li><a href="1_mutability.html"><strong aria-hidden="true">1.3.</strong> Mutability</a></li><li><a href="1_functions.html"><strong aria-hidden="true">1.4.</strong> Functions</a></li></ol></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><ol class="section"><li><a href="2_colon.html"><strong aria-hidden="true">2.1.</strong> The Colon Operator</a></li><li><a href="2_function_contracts.html"><strong aria-hidden="true">2.2.</strong> Function Contracts</a></li><li><a href="2_local_variables.html"><strong aria-hidden="true">2.3.</strong> Local Variables with Properties</a></li><li><a href="2_making_properties.html"><strong aria-hidden="true">2.4.</strong> Making Our Own Properties</a></li><li><a href="2_ctassert.html"><strong aria-hidden="true">2.5.</strong> Compile Time Asserts</a></li><li><a href="2_std_props.html"><strong aria-hidden="true">2.6.</strong> Standrad Library Properties</a></li><li><a href="2_q_sort.html"><strong aria-hidden="true">2.7.</strong> Quicksort Example</a></li></ol></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="halting.html"><strong aria-hidden="true">4.</strong> Halting</a></li><li><ol class="section"><li><a href="recursion_base_case.html"><strong aria-hidden="true">4.1.</strong> Recursion Base Case</a></li></ol></li><li><a href="memory_management.html" class="active"><strong aria-hidden="true">5.</strong> Memory Management</a></li><li><ol class="section"><li><a href="owned_types.html"><strong aria-hidden="true">5.1.</strong> Owned Types</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -140,85 +140,47 @@
 <p>This section is very volatile, and not fully decided. However, I'd like to present my tentative idea</p>
 <a class="header" href="#non-nullable--nullable-types" id="non-nullable--nullable-types"><h2>Non-Nullable &amp; Nullable Types</h2></a>
 <p>By default, when you declare a variable with a non-primitive type, like <code>String</code> as shown here...</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-String s = &quot;Hello&quot;;
+<pre><code class="language-dep">String s = &quot;Hello&quot;;
 Vec v = Vec.new();
-#}</code></pre></pre>
+</code></pre>
 <p>In this situation, the Type identifier on the far left was just the type name. This means that you have defined a non-nullable reference, like in Swift.</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-//String s = null;
+<pre><code class="language-dep">//String s = null;
 //BAD: s is non-nullable
-#}</code></pre></pre>
+</code></pre>
 <p>Also as in Swift, null-able data types can be declared using a <code>?</code> after the type name</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-String? s = null;
+<pre><code class="language-dep">String? s = null;
 //OK!
-#}</code></pre></pre>
+</code></pre>
 <p>This means that if your function might return null, the return type must be nullable</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-fn mightBeNull() -&gt; String? {
+<pre><code class="language-dep">fn mightBeNull() -&gt; String? {
   if (rand(100) == 0)
     null;
   else
     &quot;roll again...&quot;;
 }
-#}</code></pre></pre>
+</code></pre>
 <p>And if you have a non-nullable data type, it cannot take nullable data</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-//String s = mightBeNull();
+<pre><code class="language-dep">String s = mightBeNull();
 //BAD: mightBeNull returns a nullable String
-#}</code></pre></pre>
+</code></pre>
 <p>Here we can use the reduced ternary operator (<code>?:</code>) AKA the Elvis operator to return early if this <code>mightBeNull()</code> is <code>null</code></p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-String s = mightBeNull() ?: return;
-#}</code></pre></pre>
-<a class="header" href="#owned-types" id="owned-types"><h2>Owned Types</h2></a>
-<p>However, we would like introduce the concept of ownership similar to in Rust. This provides a benefit not only in the efficiency of your code, but also in its structure.</p>
-<p>I'm imagining something like</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-Vec own my_vec = Vec.own();
-#}</code></pre></pre>
-<p>Where the <code>Vec.own()</code> method returns a new owned reference to a <code>Vec</code>. You could also get a reference like</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-Vec own my_vec = Vec.own();
-Vec ref borrow = ref my_vec;
-#}</code></pre></pre>
-<p>I also had another idea where there is a shortened syntax for both of these</p>
-<pre><pre class="playpen"><code class="language-rust">
-# #![allow(unused_variables)]
-#fn main() {
-Vec$ owned_vec = Vec.own();
-Vec&amp; borrow = &amp;owned_vec;
-#}</code></pre></pre>
+<pre><code class="language-dep">String s = mightBeNull() ?: return;
+</code></pre>
+<a class="header" href="#garbage-collection" id="garbage-collection"><h2>Garbage Collection</h2></a>
+<p>The nullable and non-nullable references are garbage collected. Whether by ARC or tracing is not specified by this document.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="property_functions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="recursion_base_case.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="predep_vs_dep.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="owned_types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -230,13 +192,13 @@ Vec&amp; borrow = &amp;owned_vec;
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="property_functions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="recursion_base_case.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="predep_vs_dep.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="owned_types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

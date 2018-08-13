@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Properties in Dep - The Dep Programming Language</title>
+        <title>Quicksort Example - The Dep Programming Language</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><ol class="section"><li><a href="hello_world.html"><strong aria-hidden="true">1.1.</strong> Hello World</a></li><li><a href="1_variables.html"><strong aria-hidden="true">1.2.</strong> Variables</a></li><li><a href="1_mutability.html"><strong aria-hidden="true">1.3.</strong> Mutability</a></li><li><a href="1_functions.html"><strong aria-hidden="true">1.4.</strong> Functions</a></li></ol></li><li><a href="properties.html" class="active"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><ol class="section"><li><a href="2_colon.html"><strong aria-hidden="true">2.1.</strong> The Colon Operator</a></li><li><a href="2_function_contracts.html"><strong aria-hidden="true">2.2.</strong> Function Contracts</a></li><li><a href="2_local_variables.html"><strong aria-hidden="true">2.3.</strong> Local Variables with Properties</a></li><li><a href="2_making_properties.html"><strong aria-hidden="true">2.4.</strong> Making Our Own Properties</a></li><li><a href="2_ctassert.html"><strong aria-hidden="true">2.5.</strong> Compile Time Asserts</a></li><li><a href="2_std_props.html"><strong aria-hidden="true">2.6.</strong> Standrad Library Properties</a></li><li><a href="2_q_sort.html"><strong aria-hidden="true">2.7.</strong> Quicksort Example</a></li></ol></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="halting.html"><strong aria-hidden="true">4.</strong> Halting</a></li><li><ol class="section"><li><a href="recursion_base_case.html"><strong aria-hidden="true">4.1.</strong> Recursion Base Case</a></li></ol></li><li><a href="memory_management.html"><strong aria-hidden="true">5.</strong> Memory Management</a></li><li><ol class="section"><li><a href="owned_types.html"><strong aria-hidden="true">5.1.</strong> Owned Types</a></li></ol></li></ol>
+            <ol class="chapter"><li class="affix"><a href="intro.html">Intro</a></li><li><a href="basic_syntax.html"><strong aria-hidden="true">1.</strong> Basic Syntax</a></li><li><ol class="section"><li><a href="hello_world.html"><strong aria-hidden="true">1.1.</strong> Hello World</a></li><li><a href="1_variables.html"><strong aria-hidden="true">1.2.</strong> Variables</a></li><li><a href="1_mutability.html"><strong aria-hidden="true">1.3.</strong> Mutability</a></li><li><a href="1_functions.html"><strong aria-hidden="true">1.4.</strong> Functions</a></li></ol></li><li><a href="properties.html"><strong aria-hidden="true">2.</strong> Properties in Dep</a></li><li><ol class="section"><li><a href="2_colon.html"><strong aria-hidden="true">2.1.</strong> The Colon Operator</a></li><li><a href="2_function_contracts.html"><strong aria-hidden="true">2.2.</strong> Function Contracts</a></li><li><a href="2_local_variables.html"><strong aria-hidden="true">2.3.</strong> Local Variables with Properties</a></li><li><a href="2_making_properties.html"><strong aria-hidden="true">2.4.</strong> Making Our Own Properties</a></li><li><a href="2_ctassert.html"><strong aria-hidden="true">2.5.</strong> Compile Time Asserts</a></li><li><a href="2_std_props.html"><strong aria-hidden="true">2.6.</strong> Standrad Library Properties</a></li><li><a href="2_q_sort.html" class="active"><strong aria-hidden="true">2.7.</strong> Quicksort Example</a></li></ol></li><li><a href="property_functions.html"><strong aria-hidden="true">3.</strong> Property Functions</a></li><li><a href="halting.html"><strong aria-hidden="true">4.</strong> Halting</a></li><li><ol class="section"><li><a href="recursion_base_case.html"><strong aria-hidden="true">4.1.</strong> Recursion Base Case</a></li></ol></li><li><a href="memory_management.html"><strong aria-hidden="true">5.</strong> Memory Management</a></li><li><ol class="section"><li><a href="owned_types.html"><strong aria-hidden="true">5.1.</strong> Owned Types</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -136,26 +136,70 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#properties-in-dep" id="properties-in-dep"><h1>Properties in Dep</h1></a>
-<a class="header" href="#zero-cost-abstraction" id="zero-cost-abstraction"><h2>Zero-Cost Abstraction</h2></a>
-<p>In Dep, you can guarantee the correctness of your code without ever sacrificing speed. Just like how the type system in C/C++ has effect on speed, properties in Dep are only checked at compile-time.</p>
-<p>This is the core principle of Dep:</p>
-<blockquote>
-<p>Prove your programs correct with zero-cost abstractions</p>
-</blockquote>
+                        <a class="header" href="#quicksort-example" id="quicksort-example"><h1>Quicksort Example</h1></a>
+<p>Let's write quicksort. Just by compiling in Dep, it will be proven that this function is a correct implementation of a sorting function. We do this by creating a contract in the function</p>
+<pre><code class="language-dep">fn q_sort(Vec&lt;int&gt; src) -&gt; Vec&lt;int&gt; : Sorted + Reorder(src) { ... }
+</code></pre>
+<p>Let's break down just the method signature.</p>
+<p>First, it takes in a vector (resizing array) of ints and returns a vector of ints.</p>
+<p>Next, after the return type we see the colon, signaling a list of properties about the return.</p>
+<p>There are two properties of the return type, <code>Sorted</code> and <code>Reorder(in)</code></p>
+<a class="header" href="#quicksort-implementation" id="quicksort-implementation"><h2>Quicksort Implementation</h2></a>
+<p>In case you don't know how quicksort works or forgot, here's a quick refresher. Note this is not the in-place quicksort, so it will allocate more memory. <em>However</em>, in-place quicksort is entirely possible and proveable in Dep, we may revisit it later to show properties that work on systems-style applications</p>
+<p>The pseudocode for Quicksort goes like</p>
+<pre><code class="language-python">def quicksort(src):
+  # Base case: one or zero element array is already sorted
+  if (src.len &lt; 2):
+    return src
+  pivot = median of several random elements in src
+  left = new array
+  right = new array
+  # Split the input into values less than pivot and greater than pivot
+  for curr in src:
+    if (curr &lt; pivot):
+      left.push(curr)
+    else:
+      right.push(curr)
+  # Sort each half recursively
+  left = quicksort(left)
+  right = quicksort(right)
+  # Since left &amp; right are sorted, put right on the end of left
+  return left.push(right)
+</code></pre>
+<p>The Dep version will look like this:</p>
+<pre><code class="language-dep">fn q_sort(Vec src) -&gt; Vec : Sorted + Reorder(src) {
+  if (src.len &lt; 2)
+    return src;
+  int pivot = src.getRandMedian();
+  Vec mut left = Vec.new();
+  Vec mut right = Vec.new();
+  for (int curr in src) {
+    if (curr &lt; pivot) 
+      left.push(curr);
+    else 
+      right.push(curr);
+  }
+  left = q_sort(left);
+  right = q_sort(right);
+  return left.push(right);
+}
+</code></pre>
+<p>The great thing is that this looks almost exactly like our pseudocode! The only difference was the properties of the return value which we discussed earlier. Despite the fact that we just translated our pseudocode, this is all proven correct at compile-time!</p>
+<p>This is all thanks to the property definitions of the standard library which accounts for <code>Vec</code> and <code>Vec.push</code> as well as several other implicit properties which the compiler can compose together to get our return value's properties</p>
+<p>In the next section we will talk about some of these</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="1_functions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="2_std_props.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="2_colon.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="property_functions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -167,13 +211,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="1_functions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="2_std_props.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="2_colon.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="property_functions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
