@@ -148,10 +148,22 @@ j = 15;
 </code></pre>
 <p>Note that the property doesn't just have to hold true initially, it must always hold true. If the compiler cannot guarantee that all properties are true, then it will not compile.</p>
 <a class="header" href="#multiple-properties" id="multiple-properties"><h2>Multiple Properties</h2></a>
-<p>Variables can have as many properties as you want. When defining multiple properties, put a <code>+</code> between the properties</p>
+<p>Variables can have as many properties as you want. When defining multiple properties,
+either put a <code>+</code> between the properties or just put a space</p>
 <pre><code class="language-dep">int i : Bigger(5) + Not(10) = 7;
+int i : Bigger(5) Not(10) = 7;
+// Same thing
 </code></pre>
-<p>We use the <code>+</code> symbol here instead of something like <code>,</code> because it would make parsing difficult in some situations. For example, using generics.</p>
+<p>We use the <code>+</code> symbol here instead of something like <code>,</code> because it would make
+parsing difficult in some situations. For example, in function parameters</p>
+<pre><code class="language-dep">// We DON'T do this
+fn foo(int i : Bigger(5), Not(10), String s : Contains(&quot;hello&quot;)) {
+  //...
+}
+</code></pre>
+<p>See how if we use commas, we're not sure if Not(10) is supposed to be a type or
+a property?</p>
+<p>Whether to use the <code>+</code> or not is really just a stylistic choice</p>
 
                     </main>
 
@@ -190,21 +202,6 @@ j = 15;
 
         </div>
 
-        
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            var socket = new WebSocket("ws://localhost:3001");
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload(true); // force reload from server (not from cache)
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
         
 
         
